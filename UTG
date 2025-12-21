@@ -1,0 +1,225 @@
+--Hello there! :D Why you trying to steal my script?
+
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+
+local utgGui = Instance.new("ScreenGui")
+utgGui.Name = "UTG"
+utgGui.ResetOnSpawn = false
+utgGui.Parent = player:WaitForChild("PlayerGui")
+
+local utgFrame = Instance.new("Frame")
+utgFrame.Size = UDim2.new(0, 260, 0, 300)
+utgFrame.Position = UDim2.new(0, 20, 0, 20)
+utgFrame.BackgroundColor3 = Color3.fromRGB(30,30,35)
+utgFrame.Active = true
+utgFrame.Draggable = true
+utgFrame.Parent = utgGui
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1,0,0,30)
+titleBar.BackgroundColor3 = Color3.fromRGB(45,45,55)
+titleBar.Parent = utgFrame
+
+local titleText = Instance.new("TextLabel")
+titleText.Size = UDim2.new(1,-90,1,0)
+titleText.Position = UDim2.new(0,5,0,0)
+titleText.BackgroundTransparency = 1
+titleText.Text = "UTG Quicksand Engine"
+titleText.TextColor3 = Color3.fromRGB(255,255,255)
+titleText.Font = Enum.Font.SourceSansBold
+titleText.TextSize = 18
+titleText.TextXAlignment = Enum.TextXAlignment.Left
+titleText.Parent = titleBar
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0,25,1,0)
+closeBtn.Position = UDim2.new(1,-25,0,0)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.fromRGB(255,80,80)
+closeBtn.BackgroundColor3 = Color3.fromRGB(60,60,70)
+closeBtn.Parent = titleBar
+
+local minBtn = Instance.new("TextButton")
+minBtn.Size = UDim2.new(0,25,1,0)
+minBtn.Position = UDim2.new(1,-55,0,0)
+minBtn.Text = "-"
+minBtn.TextColor3 = Color3.fromRGB(255,255,255)
+minBtn.BackgroundColor3 = Color3.fromRGB(60,60,70)
+minBtn.Parent = titleBar
+
+local maxBtn = Instance.new("TextButton")
+maxBtn.Size = UDim2.new(0,25,1,0)
+maxBtn.Position = UDim2.new(1,-85,0,0)
+maxBtn.Text = "□"
+maxBtn.TextColor3 = Color3.fromRGB(255,255,255)
+maxBtn.BackgroundColor3 = Color3.fromRGB(60,60,70)
+maxBtn.Parent = titleBar
+local utgScroll = Instance.new("ScrollingFrame")
+utgScroll.Size = UDim2.new(1,-10,1,-40)
+utgScroll.Position = UDim2.new(0,5,0,35)
+utgScroll.CanvasSize = UDim2.new(0,0,0,0)
+utgScroll.ScrollBarThickness = 6
+utgScroll.BackgroundTransparency = 1
+utgScroll.Parent = utgFrame
+
+local utgLayout = Instance.new("UIListLayout")
+utgLayout.Padding = UDim.new(0,8)
+utgLayout.FillDirection = Enum.FillDirection.Vertical
+utgLayout.Parent = utgScroll
+
+utgLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    utgScroll.CanvasSize = UDim2.new(0,0,0,utgLayout.AbsoluteContentSize.Y+10)
+end)
+
+local function makeUTGButton(text)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1,-20,0,40)
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    btn.BackgroundColor3 = Color3.fromRGB(50,50,60)
+    btn.ClipsDescendants = true
+    btn.Parent = utgScroll
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0,8)
+    corner.Parent = btn
+    return btn
+end
+local rootBtn = makeUTGButton("Toggle Freeze RootPart")
+local charBtn = makeUTGButton("Toggle Freeze Character")
+
+-- Special long text button
+local tallBtn = Instance.new("TextButton")
+tallBtn.Size = UDim2.new(1,-20,0,40)
+tallBtn.Text = ""
+tallBtn.BackgroundColor3 = Color3.fromRGB(50,50,60)
+tallBtn.ClipsDescendants = true
+tallBtn.Parent = utgScroll
+
+local tallLabel = Instance.new("TextLabel")
+tallLabel.Size = UDim2.new(0,1000,1,0)
+tallLabel.Text = "THE TALL/TOWER (your character must be sticky but idk why cones dragging character down this for others see)"
+tallLabel.BackgroundTransparency = 1
+tallLabel.TextColor3 = Color3.fromRGB(255,255,255)
+tallLabel.Font = Enum.Font.SourceSans
+tallLabel.TextSize = 16
+tallLabel.Parent = tallBtn
+
+-- Animate text
+task.spawn(function()
+    while true do
+        for i = 0, tallLabel.TextBounds.X do
+            tallLabel.Position = UDim2.new(0,-i,0,0)
+            task.wait(0.02)
+        end
+        task.wait(1)
+    end
+end)
+
+local antiSinkBtn = makeUTGButton("Anti-Sinking")
+-- Root Freeze
+local rootFrozen = false
+rootBtn.MouseButton1Click:Connect(function()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        rootFrozen = not rootFrozen
+        root.Anchored = rootFrozen
+        rootBtn.Text = rootFrozen and "Frozen RootPart" or "Toggle Freeze RootPart"
+    end
+end)
+
+-- Character Freeze
+local charFrozen = false
+charBtn.MouseButton1Click:Connect(function()
+    local char = player.Character or player.CharacterAdded:Wait()
+    charFrozen = not charFrozen
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Anchored = charFrozen
+        end
+    end
+    charBtn.Text = charFrozen and "Frozen Character" or "Toggle Freeze Character"
+end)
+
+-- Tall Teleport
+tallBtn.MouseButton1Click:Connect(function()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.CFrame = CFrame.new(root.Position.X, 1000, root.Position.Z)
+    end
+end)
+
+-- Anti-Sinking
+local antiSinkOn = false
+local antiLoop = nil
+antiSinkBtn.MouseButton1Click:Connect(function()
+    antiSinkOn = not antiSinkOn
+    if antiSinkOn then
+        antiSinkBtn.Text = "Anti-Sinking ON"
+        antiLoop = task.spawn(function()
+            while antiSinkOn do
+                for _, part in ipairs(workspace:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        for _, sinkName in ipairs({"Glue","WallGlue","Clay","LiquidBog","Mud","Quicksand","Slime","Tar","Oobleck"}) do
+                            if part.Name == sinkName then
+                                part.Anchored = true
+                                part.CanCollide = true
+                            end
+                        end
+                    end
+                end
+                task.wait(0.5)
+            end
+        end)
+    else
+        antiSinkBtn.Text = "Anti-Sinking"
+        if antiLoop then
+            task.cancel(antiLoop)
+            antiLoop = nil
+        end
+        for _, part in ipairs(workspace:GetDescendants()) do
+            if part:IsA("BasePart") then
+                for _, sinkName in ipairs({"Glue","WallGlue","Clay","LiquidBog","Mud","Quicksand","Slime","Tar","Oobleck"}) do
+                    if part.Name == sinkName then
+                        part.CanCollide = false
+                        part.Anchored = true
+                    end
+                end
+            end
+        end
+    end
+end)
+-- Close Button
+closeBtn.MouseButton1Click:Connect(function()
+    utgGui.Enabled = false
+end)
+
+-- Minimize Button
+local minimized = false
+minBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    utgScroll.Visible = not minimized
+end)
+
+-- Maximize Button
+local maximized = false
+maxBtn.MouseButton1Click:Connect(function()
+    maximized = not maximized
+    if maximized then
+        utgFrame.Size = UDim2.new(0,500,0,400)
+    else
+        utgFrame.Size = UDim2.new(0,260,0,300)
+    end
+end)
+
+-- Hide Toggle with H Key
+local hidden = false
+UserInputService.InputBegan:Connect(function(input, gp)
+    if not gp and input.KeyCode == Enum.KeyCode.H then
+        hidden = not hidden
+        utgFrame.Visible = not hidden
+    end
+end)
