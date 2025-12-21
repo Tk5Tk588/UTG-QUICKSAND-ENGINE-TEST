@@ -2,9 +2,67 @@
 
 
 local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
 local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
+local correctPlaceId = 107598099227012
+
+if game.PlaceId ~= correctPlaceId then
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "WrongGameNotifier"
+    gui.ResetOnSpawn = false
+    gui.Parent = player:WaitForChild("PlayerGui")
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0.5,0,0.3,0)
+    frame.Position = UDim2.new(0.25,0,0.35,0)
+    frame.BackgroundColor3 = Color3.fromRGB(40,0,60) -- purple
+    frame.Parent = gui
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1,-20,0.6,-20)
+    label.Position = UDim2.new(0,10,0,10)
+    label.BackgroundTransparency = 1
+    label.TextColor3 = Color3.fromRGB(0,255,255) -- cyan
+    label.Font = Enum.Font.SourceSansBold
+    label.TextSize = 22
+    label.TextWrapped = true
+    label.Text = "Sorry! You are in wrong game.\nPlease click Copy Link or Play Game."
+    label.Parent = frame
+
+    local copyBtn = Instance.new("TextButton")
+    copyBtn.Size = UDim2.new(0.45,0,0.25,0)
+    copyBtn.Position = UDim2.new(0.05,0,0.7,0)
+    copyBtn.Text = "Copy Link"
+    copyBtn.BackgroundColor3 = Color3.fromRGB(50,0,100) -- indigo
+    copyBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    copyBtn.Parent = frame
+
+    local playBtn = Instance.new("TextButton")
+    playBtn.Size = UDim2.new(0.45,0,0.25,0)
+    playBtn.Position = UDim2.new(0.5,0,0.7,0)
+    playBtn.Text = "Play Game"
+    playBtn.BackgroundColor3 = Color3.fromRGB(50,0,100)
+    playBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    playBtn.Parent = frame
+
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://130762736"
+    sound.Volume = 1
+    sound.Parent = frame
+    sound:Play()
+
+    copyBtn.MouseButton1Click:Connect(function()
+        if setclipboard then
+            setclipboard("https://www.roblox.com/games/"..correctPlaceId)
+        end
+    end)
+
+    playBtn.MouseButton1Click:Connect(function()
+        TeleportService:Teleport(correctPlaceId, player)
+    end)
+end
 local utgGui = Instance.new("ScreenGui")
 utgGui.Name = "UTG"
 utgGui.ResetOnSpawn = false
@@ -13,13 +71,14 @@ utgGui.Parent = player:WaitForChild("PlayerGui")
 local utgFrame = Instance.new("Frame")
 utgFrame.Size = UDim2.new(0, 260, 0, 300)
 utgFrame.Position = UDim2.new(0, 20, 0, 20)
-utgFrame.BackgroundColor3 = Color3.fromRGB(30,30,35)
+utgFrame.BackgroundColor3 = Color3.fromRGB(40,0,60) -- purple
 utgFrame.Active = true
 utgFrame.Draggable = true
 utgFrame.Parent = utgGui
+
 local titleBar = Instance.new("Frame")
 titleBar.Size = UDim2.new(1,0,0,30)
-titleBar.BackgroundColor3 = Color3.fromRGB(45,45,55)
+titleBar.BackgroundColor3 = Color3.fromRGB(0,120,200) -- neon blue
 titleBar.Parent = utgFrame
 
 local titleText = Instance.new("TextLabel")
@@ -27,34 +86,33 @@ titleText.Size = UDim2.new(1,-90,1,0)
 titleText.Position = UDim2.new(0,5,0,0)
 titleText.BackgroundTransparency = 1
 titleText.Text = "UTG Quicksand Engine"
-titleText.TextColor3 = Color3.fromRGB(255,255,255)
+titleText.TextColor3 = Color3.fromRGB(0,255,255) -- cyan
 titleText.Font = Enum.Font.SourceSansBold
 titleText.TextSize = 18
 titleText.TextXAlignment = Enum.TextXAlignment.Left
 titleText.Parent = titleBar
-
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0,25,1,0)
 closeBtn.Position = UDim2.new(1,-25,0,0)
 closeBtn.Text = "X"
-closeBtn.TextColor3 = Color3.fromRGB(255,80,80)
-closeBtn.BackgroundColor3 = Color3.fromRGB(60,60,70)
+closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200,50,50) -- red
 closeBtn.Parent = titleBar
 
 local minBtn = Instance.new("TextButton")
 minBtn.Size = UDim2.new(0,25,1,0)
 minBtn.Position = UDim2.new(1,-55,0,0)
 minBtn.Text = "-"
-minBtn.TextColor3 = Color3.fromRGB(255,255,255)
-minBtn.BackgroundColor3 = Color3.fromRGB(60,60,70)
+minBtn.TextColor3 = Color3.fromRGB(0,255,100) -- neon green
+minBtn.BackgroundColor3 = Color3.fromRGB(30,30,30)
 minBtn.Parent = titleBar
 
 local maxBtn = Instance.new("TextButton")
 maxBtn.Size = UDim2.new(0,25,1,0)
 maxBtn.Position = UDim2.new(1,-85,0,0)
 maxBtn.Text = "□"
-maxBtn.TextColor3 = Color3.fromRGB(255,255,255)
-maxBtn.BackgroundColor3 = Color3.fromRGB(60,60,70)
+maxBtn.TextColor3 = Color3.fromRGB(0,255,100)
+maxBtn.BackgroundColor3 = Color3.fromRGB(30,30,30)
 maxBtn.Parent = titleBar
 local utgScroll = Instance.new("ScrollingFrame")
 utgScroll.Size = UDim2.new(1,-10,1,-40)
@@ -77,15 +135,13 @@ local function makeUTGButton(text)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1,-20,0,40)
     btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(50,0,100) -- indigo
     btn.TextColor3 = Color3.fromRGB(255,255,255)
-    btn.BackgroundColor3 = Color3.fromRGB(50,50,60)
-    btn.ClipsDescendants = true
     btn.Parent = utgScroll
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0,8)
-    corner.Parent = btn
     return btn
 end
+
+-- Freeze buttons
 local rootBtn = makeUTGButton("Toggle Freeze RootPart")
 local charBtn = makeUTGButton("Toggle Freeze Character")
 
@@ -93,7 +149,8 @@ local charBtn = makeUTGButton("Toggle Freeze Character")
 local tallBtn = Instance.new("TextButton")
 tallBtn.Size = UDim2.new(1,-20,0,40)
 tallBtn.Text = ""
-tallBtn.BackgroundColor3 = Color3.fromRGB(50,50,60)
+tallBtn.BackgroundColor3 = Color3.fromRGB(50,0,100)
+tallBtn.TextColor3 = Color3.fromRGB(255,255,255)
 tallBtn.ClipsDescendants = true
 tallBtn.Parent = utgScroll
 
@@ -106,7 +163,7 @@ tallLabel.Font = Enum.Font.SourceSans
 tallLabel.TextSize = 16
 tallLabel.Parent = tallBtn
 
--- Animate text
+-- Animate text (marquee style)
 task.spawn(function()
     while true do
         for i = 0, tallLabel.TextBounds.X do
@@ -117,7 +174,30 @@ task.spawn(function()
     end
 end)
 
+-- Anti-Sinking button
 local antiSinkBtn = makeUTGButton("Anti-Sinking")
+
+-- Teleport zone buttons
+local tpGlue1Btn = makeUTGButton("TP Glue1")
+local tpGlue2Btn = makeUTGButton("TP Glue2")
+local tpGlue3Btn = makeUTGButton("TP Glue3")
+local tpGlue4Btn = makeUTGButton("TP Glue4")
+local tpGlue5Btn = makeUTGButton("TP Glue5")
+local tpGlue6Btn = makeUTGButton("TP Glue6")
+local tpWallGlueBtn = makeUTGButton("TP WallGlue")
+local tpClayBtn = makeUTGButton("TP Clay")
+local tpLiquidBogBtn = makeUTGButton("TP LiquidBog")
+local tpMudBtn = makeUTGButton("TP Mud")
+local tpQuicksandBtn = makeUTGButton("TP Quicksand")
+local tpSlimeBtn = makeUTGButton("TP Slime")
+local tpTarBtn = makeUTGButton("TP Tar")
+local tpOobleckBtn = makeUTGButton("TP Oobleck")
+local function tpTo(pos)
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then root.CFrame = CFrame.new(pos) end
+end
+
 -- Root Freeze
 local rootFrozen = false
 rootBtn.MouseButton1Click:Connect(function()
@@ -152,7 +232,7 @@ tallBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Anti-Sinking
+-- Anti-Sinking (Anchored true always, CanCollide false on OFF)
 local antiSinkOn = false
 local antiLoop = nil
 antiSinkBtn.MouseButton1Click:Connect(function()
@@ -163,7 +243,10 @@ antiSinkBtn.MouseButton1Click:Connect(function()
             while antiSinkOn do
                 for _, part in ipairs(workspace:GetDescendants()) do
                     if part:IsA("BasePart") then
-                        for _, sinkName in ipairs({"Glue","WallGlue","Clay","LiquidBog","Mud","Quicksand","Slime","Tar","Oobleck"}) do
+                        for _, sinkName in ipairs({
+                            "Glue","WallGlue","Clay","LiquidBog",
+                            "Mud","Quicksand","Slime","Tar","Oobleck"
+                        }) do
                             if part.Name == sinkName then
                                 part.Anchored = true
                                 part.CanCollide = true
@@ -182,16 +265,67 @@ antiSinkBtn.MouseButton1Click:Connect(function()
         end
         for _, part in ipairs(workspace:GetDescendants()) do
             if part:IsA("BasePart") then
-                for _, sinkName in ipairs({"Glue","WallGlue","Clay","LiquidBog","Mud","Quicksand","Slime","Tar","Oobleck"}) do
+                for _, sinkName in ipairs({
+                    "Glue","WallGlue","Clay","LiquidBog",
+                    "Mud","Quicksand","Slime","Tar","Oobleck"
+                }) do
                     if part.Name == sinkName then
-                        part.CanCollide = false
-                        part.Anchored = true
+                        part.Anchored = true   -- stays anchored
+                        part.CanCollide = false -- walk-through
                     end
                 end
             end
         end
     end
 end)
+
+-- Teleport Zones
+tpGlue1Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(107,266,54)) end)
+tpGlue2Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,45)) end)
+tpGlue3Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,37)) end)
+tpGlue4Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,29)) end)
+tpGlue5Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,21)) end)
+tpGlue6Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,14)) end)
+tpWallGlueBtn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,-10)) end)
+tpClayBtn.MouseButton1Click:Connect(function() tpTo(Vector3.new(-37,273,247)) end)
+tpLiquidBogBtn.MouseButton1Click:Connect(function() tpTo(Vector3.new(34,19,-7)) end)
+
+-- Mud with warning ⚠️
+tpMudBtn.MouseButton1Click:Connect(function()
+    tpTo(Vector3.new(39,259,18))
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "GrassWarning"
+    gui.ResetOnSpawn = false
+    gui.Parent = player:WaitForChild("PlayerGui")
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0.4,0,0.15,0)
+    frame.Position = UDim2.new(0.3,0,0.8,0)
+    frame.BackgroundColor3 = Color3.fromRGB(0,150,0)
+    frame.Parent = gui
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1,0,1,0)
+    label.BackgroundTransparency = 1
+    label.TextColor3 = Color3.fromRGB(255,255,255)
+    label.Font = Enum.Font.SourceSansBold
+    label.TextSize = 24
+    label.Text = "⚠️ Touching Grass Detected!"
+    label.Parent = frame
+
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://130762736"
+    sound.Volume = 1
+    sound.Parent = frame
+    sound:Play()
+
+    task.delay(3,function() gui:Destroy() end)
+end)
+
+tpQuicksandBtn.MouseButton1Click:Connect(function() tpTo(Vector3.new(25,293,-90)) end)
+tpSlimeBtn.MouseButton1Click:Connect(function() tpTo(Vector3.new(113,260,132)) end)
+tpTarBtn.MouseButton1Click:Connect(function() tpTo(Vector3.new(72,303,-185)) end)
+tpOobleckBtn.MouseButton1Click:Connect(function() tpTo(Vector3.new(8,19,22)) end)
 -- Close Button
 closeBtn.MouseButton1Click:Connect(function()
     utgGui.Enabled = false
