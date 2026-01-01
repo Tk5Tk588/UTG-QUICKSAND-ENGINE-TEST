@@ -1,6 +1,3 @@
---Hello there! :D Why you trying to steal my script?
-
-
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local UserInputService = game:GetService("UserInputService")
@@ -17,14 +14,14 @@ if game.PlaceId ~= correctPlaceId then
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(0.5,0,0.3,0)
     frame.Position = UDim2.new(0.25,0,0.35,0)
-    frame.BackgroundColor3 = Color3.fromRGB(40,0,60) -- purple
+    frame.BackgroundColor3 = Color3.fromRGB(40,0,60)
     frame.Parent = gui
 
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(1,-20,0.6,-20)
     label.Position = UDim2.new(0,10,0,10)
     label.BackgroundTransparency = 1
-    label.TextColor3 = Color3.fromRGB(0,255,255) -- cyan
+    label.TextColor3 = Color3.fromRGB(0,255,255)
     label.Font = Enum.Font.SourceSansBold
     label.TextSize = 22
     label.TextWrapped = true
@@ -35,7 +32,7 @@ if game.PlaceId ~= correctPlaceId then
     copyBtn.Size = UDim2.new(0.45,0,0.25,0)
     copyBtn.Position = UDim2.new(0.05,0,0.7,0)
     copyBtn.Text = "Copy Link"
-    copyBtn.BackgroundColor3 = Color3.fromRGB(50,0,100) -- indigo
+    copyBtn.BackgroundColor3 = Color3.fromRGB(50,0,100)
     copyBtn.TextColor3 = Color3.fromRGB(255,255,255)
     copyBtn.Parent = frame
 
@@ -46,12 +43,6 @@ if game.PlaceId ~= correctPlaceId then
     playBtn.BackgroundColor3 = Color3.fromRGB(50,0,100)
     playBtn.TextColor3 = Color3.fromRGB(255,255,255)
     playBtn.Parent = frame
-
-    local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://130762736"
-    sound.Volume = 1
-    sound.Parent = frame
-    sound:Play()
 
     copyBtn.MouseButton1Click:Connect(function()
         if setclipboard then
@@ -71,14 +62,14 @@ utgGui.Parent = player:WaitForChild("PlayerGui")
 local utgFrame = Instance.new("Frame")
 utgFrame.Size = UDim2.new(0, 260, 0, 300)
 utgFrame.Position = UDim2.new(0, 20, 0, 20)
-utgFrame.BackgroundColor3 = Color3.fromRGB(40,0,60) -- purple
+utgFrame.BackgroundColor3 = Color3.fromRGB(40,0,60)
 utgFrame.Active = true
 utgFrame.Draggable = true
 utgFrame.Parent = utgGui
 
 local titleBar = Instance.new("Frame")
 titleBar.Size = UDim2.new(1,0,0,30)
-titleBar.BackgroundColor3 = Color3.fromRGB(0,120,200) -- neon blue
+titleBar.BackgroundColor3 = Color3.fromRGB(0,120,200)
 titleBar.Parent = utgFrame
 
 local titleText = Instance.new("TextLabel")
@@ -86,7 +77,7 @@ titleText.Size = UDim2.new(1,-90,1,0)
 titleText.Position = UDim2.new(0,5,0,0)
 titleText.BackgroundTransparency = 1
 titleText.Text = "UTG Quicksand Engine"
-titleText.TextColor3 = Color3.fromRGB(0,255,255) -- cyan
+titleText.TextColor3 = Color3.fromRGB(0,255,255)
 titleText.Font = Enum.Font.SourceSansBold
 titleText.TextSize = 18
 titleText.TextXAlignment = Enum.TextXAlignment.Left
@@ -96,14 +87,14 @@ closeBtn.Size = UDim2.new(0,25,1,0)
 closeBtn.Position = UDim2.new(1,-25,0,0)
 closeBtn.Text = "X"
 closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
-closeBtn.BackgroundColor3 = Color3.fromRGB(200,50,50) -- red
+closeBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
 closeBtn.Parent = titleBar
 
 local minBtn = Instance.new("TextButton")
 minBtn.Size = UDim2.new(0,25,1,0)
 minBtn.Position = UDim2.new(1,-55,0,0)
 minBtn.Text = "-"
-minBtn.TextColor3 = Color3.fromRGB(0,255,100) -- neon green
+minBtn.TextColor3 = Color3.fromRGB(0,255,100)
 minBtn.BackgroundColor3 = Color3.fromRGB(30,30,30)
 minBtn.Parent = titleBar
 
@@ -135,56 +126,23 @@ local function makeUTGButton(text)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1,-20,0,40)
     btn.Text = text
-    btn.BackgroundColor3 = Color3.fromRGB(50,0,100) -- indigo
+    btn.BackgroundColor3 = Color3.fromRGB(50,0,100)
     btn.TextColor3 = Color3.fromRGB(255,255,255)
     btn.Parent = utgScroll
     return btn
 end
 
--- Freeze buttons
+-- Buttons
 local rootBtn = makeUTGButton("Toggle Freeze RootPart")
 local charBtn = makeUTGButton("Toggle Freeze Character")
-
--- Special long text button
-local tallBtn = Instance.new("TextButton")
-tallBtn.Size = UDim2.new(1,-20,0,40)
-tallBtn.Text = ""
-tallBtn.BackgroundColor3 = Color3.fromRGB(50,0,100)
-tallBtn.TextColor3 = Color3.fromRGB(255,255,255)
-tallBtn.ClipsDescendants = true
-tallBtn.Parent = utgScroll
-
-local tallLabel = Instance.new("TextLabel")
-tallLabel.Size = UDim2.new(0,1000,1,0)
-tallLabel.Text = "THE TALL/TOWER (your character must be sticky but idk why cones dragging character down this for others see)"
-tallLabel.BackgroundTransparency = 1
-tallLabel.TextColor3 = Color3.fromRGB(255,255,255)
-tallLabel.Font = Enum.Font.SourceSans
-tallLabel.TextSize = 16
-tallLabel.Parent = tallBtn
-
--- Animate text (marquee style)
-task.spawn(function()
-    while true do
-        for i = 0, tallLabel.TextBounds.X do
-            tallLabel.Position = UDim2.new(0,-i,0,0)
-            task.wait(0.02)
-        end
-        task.wait(1)
-    end
-end)
-
--- Anti-Sinking button
+local tallBtn = makeUTGButton("Tall/Tower (sticky required)")
 local antiSinkBtn = makeUTGButton("Anti-Sinking")
-
--- Teleport zone buttons
 local tpGlue1Btn = makeUTGButton("TP Glue1")
 local tpGlue2Btn = makeUTGButton("TP Glue2")
 local tpGlue3Btn = makeUTGButton("TP Glue3")
 local tpGlue4Btn = makeUTGButton("TP Glue4")
-local tpGlue5Btn = makeUTGButton("TP Glue5")
-local tpGlue6Btn = makeUTGButton("TP Glue6")
-local tpWallGlueBtn = makeUTGButton("TP WallGlue")
+local tpWallGlue1Btn = makeUTGButton("TP WallGlue1")
+local tpWallGlue2Btn = makeUTGButton("TP WallGlue2")
 local tpClayBtn = makeUTGButton("TP Clay")
 local tpLiquidBogBtn = makeUTGButton("TP LiquidBog")
 local tpMudBtn = makeUTGButton("TP Mud")
@@ -192,6 +150,7 @@ local tpQuicksandBtn = makeUTGButton("TP Quicksand")
 local tpSlimeBtn = makeUTGButton("TP Slime")
 local tpTarBtn = makeUTGButton("TP Tar")
 local tpOobleckBtn = makeUTGButton("TP Oobleck")
+-- Helper: teleport function
 local function tpTo(pos)
     local char = player.Character or player.CharacterAdded:Wait()
     local root = char:FindFirstChild("HumanoidRootPart")
@@ -223,7 +182,7 @@ charBtn.MouseButton1Click:Connect(function()
     charBtn.Text = charFrozen and "Frozen Character" or "Toggle Freeze Character"
 end)
 
--- Tall Teleport
+-- Tall/Tower teleport
 tallBtn.MouseButton1Click:Connect(function()
     local char = player.Character or player.CharacterAdded:Wait()
     local root = char:FindFirstChild("HumanoidRootPart")
@@ -232,7 +191,7 @@ tallBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Anti-Sinking (Anchored true always, CanCollide false on OFF)
+-- Anti-Sinking
 local antiSinkOn = false
 local antiLoop = nil
 antiSinkBtn.MouseButton1Click:Connect(function()
@@ -270,8 +229,8 @@ antiSinkBtn.MouseButton1Click:Connect(function()
                     "Mud","Quicksand","Slime","Tar","Oobleck"
                 }) do
                     if part.Name == sinkName then
-                        part.Anchored = true   -- stays anchored
-                        part.CanCollide = false -- walk-through
+                        part.Anchored = true
+                        part.CanCollide = false
                     end
                 end
             end
@@ -279,14 +238,13 @@ antiSinkBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Teleport Zones
-tpGlue1Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(107,266,54)) end)
-tpGlue2Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,45)) end)
-tpGlue3Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,37)) end)
-tpGlue4Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,29)) end)
-tpGlue5Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,21)) end)
-tpGlue6Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,14)) end)
-tpWallGlueBtn.MouseButton1Click:Connect(function() tpTo(Vector3.new(108,266,-10)) end)
+-- Teleports (update coordinates as needed)
+tpGlue1Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(163,246,-30)) end)
+tpGlue2Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(164,246,-5)) end)
+tpGlue3Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(164,246,-5)) end)
+tpGlue4Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(168,246,-40)) end)
+tpWallGlue1Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(168,246,-36)) end)
+tpWallGlue2Btn.MouseButton1Click:Connect(function() tpTo(Vector3.new(168,246,-36)) end)
 tpClayBtn.MouseButton1Click:Connect(function() tpTo(Vector3.new(-37,273,247)) end)
 tpLiquidBogBtn.MouseButton1Click:Connect(function() tpTo(Vector3.new(34,19,-7)) end)
 
@@ -357,3 +315,4 @@ UserInputService.InputBegan:Connect(function(input, gp)
         utgFrame.Visible = not hidden
     end
 end)
+print("UTG Quicksand Engine loaded successfully. (Pillars version)")
