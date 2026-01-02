@@ -136,6 +136,7 @@ end
 local rootBtn = makeUTGButton("Toggle Freeze RootPart")
 local charBtn = makeUTGButton("Toggle Freeze Character")
 local tallBtn = makeUTGButton("Tall/Tower (sticky required)")
+local tripBtn = makeUTGButton("Trip Forward")
 local antiSinkBtn = makeUTGButton("Anti-Sinking")
 local tpGlue1Btn = makeUTGButton("TP Glue1")
 local tpGlue2Btn = makeUTGButton("TP Glue2")
@@ -190,6 +191,28 @@ tallBtn.MouseButton1Click:Connect(function()
         root.CFrame = CFrame.new(root.Position.X, 1000, root.Position.Z)
     end
 end)
+
+tripBtn.MouseButton1Click:Connect(function()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    local root = char:FindFirstChild("HumanoidRootPart")
+
+    if humanoid and root then
+        -- put humanoid into ragdoll physics
+        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
+        -- add forward velocity so it looks like a trip, not just a tilt
+        root.Velocity = root.CFrame.LookVector * 50 + Vector3.new(0, -10, 0)
+
+        -- rotate forward at -90 degrees (fall forward)
+        root.CFrame = root.CFrame * CFrame.Angles(math.rad(-90), 0, 0)
+
+        -- wait a bit, then recover
+        task.wait(3)
+        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
+end)
+
 
 -- Anti-Sinking
 local antiSinkOn = false
@@ -315,4 +338,4 @@ UserInputService.InputBegan:Connect(function(input, gp)
         utgFrame.Visible = not hidden
     end
 end)
-print("UTG Quicksand Engine loaded successfully. (Pillars version)")
+print("UTG Quicksand Engine loaded successfully. (Trip + WallGlue1–2 version)")
