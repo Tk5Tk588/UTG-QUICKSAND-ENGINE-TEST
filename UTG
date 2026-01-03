@@ -133,6 +133,8 @@ local function makeUTGButton(text)
 end
 
 -- Buttons
+local WAKEUPBtn = makeUTGButton("WAKE UP(it may get trip in a rooms)")
+local IAMRUNNINGSUPERDUPERFASTBtn = makeUTGButton("Toggle I AM RUNNING SUPER DUPER FAST")
 local IAMRUNNINGBtn = makeUTGButton("Toggle I AM RUNNING")
 local rootBtn = makeUTGButton("Toggle Freeze RootPart")
 local charBtn = makeUTGButton("Toggle Freeze Character")
@@ -160,6 +162,15 @@ local function tpTo(pos)
     if root then root.CFrame = CFrame.new(pos) end
 end
 
+WAKEUPBtn.MouseButton1Click:Connect(function()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if humanoid and root then
+        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
+end)
+
 -- Root Freeze
 local rootFrozen = false
 rootBtn.MouseButton1Click:Connect(function()
@@ -181,6 +192,18 @@ IAMRUNNINGBtn.MouseButton1Click:Connect(function()
         root.Anchored = IAMRUNNINGTOGGLE
         IAMRUNNINGBtn.Text = IAMRUNNINGTOGGLE and "STARTED IAMRUNNING" or "Toggle I AM RUNNING"
         root.Velocity = root.CFrame.LookVector * 100 + Vector3.new(0, 0, -10)
+    end
+end)
+
+local IAMRUNNINGSUPERDUPERFASTTOGGLE = false
+IAMRUNNINGSUPERDUPERFASTBtn.MouseButton1Click:Connect(function()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        IAMRUNNINGSUPERDUPERFASTTOGGLE = not IAMRUNNINGSUPERDUPERFASTTOGGLE
+        root.Anchored = IAMRUNNINGSUPERDUPERFASTTOGGLE
+        IAMRUNNINGSUPERDUPERFASTBtn.Text = IAMRUNNINGSUPERDUPERFASTTOGGLE and "STARTED IAMRUNNING SUPER DUPER FAST" or "Toggle I AM RUNNING SUPER DUPER FAST"
+        root.Velocity = root.CFrame.LookVector * 1000 + Vector3.new(0, 0, -10)
     end
 end)
 
@@ -240,7 +263,7 @@ tripBtn.MouseButton1Click:Connect(function()
         root.CFrame = root.CFrame * CFrame.Angles(math.rad(-90), 0, 0)
 
         -- wait a bit, then recover
-        task.wait(3)
+        task.wait(4.25)
         humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
     end
 end)
