@@ -133,9 +133,11 @@ local function makeUTGButton(text)
 end
 
 -- Buttons
+local IAMRUNNINGBtn = makeUTGButton("Toggle I AM RUNNING")
 local rootBtn = makeUTGButton("Toggle Freeze RootPart")
 local charBtn = makeUTGButton("Toggle Freeze Character")
 local tallBtn = makeUTGButton("Tall/Tower (sticky required)")
+local tripHardBtn = makeUTGButton("Trip Forward (HARD)")
 local tripBtn = makeUTGButton("Trip Forward")
 local antiSinkBtn = makeUTGButton("Anti-Sinking")
 local tpGlue1Btn = makeUTGButton("TP Glue1")
@@ -170,6 +172,18 @@ rootBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+local IAMRUNNINGTOGGLE = false
+IAMRUNNINGBtn.MouseButton1Click:Connect(function()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        IAMRUNNINGTOGGLE = not IAMRUNNINGTOGGLE
+        root.Anchored = IAMRUNNINGTOGGLE
+        IAMRUNNINGBtn.Text = IAMRUNNINGTOGGLE and "STARTED IAMRUNNING" or "Toggle I AM RUNNING"
+        root.Velocity = root.CFrame.LookVector * 100 + Vector3.new(0, 0, -10)
+    end
+end)
+
 -- Character Freeze
 local charFrozen = false
 charBtn.MouseButton1Click:Connect(function()
@@ -189,6 +203,24 @@ tallBtn.MouseButton1Click:Connect(function()
     local root = char:FindFirstChild("HumanoidRootPart")
     if root then
         root.CFrame = CFrame.new(root.Position.X, 1000, root.Position.Z)
+    end
+end)
+
+tripHardBtn.MouseButton1Click:Connect(function()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    local root = char:FindFirstChild("HumanoidRootPart")
+
+    if humanoid and root then
+        -- put humanoid into ragdoll physics
+        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
+        -- add forward velocity so it looks like a trip, not just a tilt. but HARD
+        root.Velocity = root.CFrame.LookVector * 100 + Vector3.new(0, 0, -10)
+
+        -- wait a bit, then recover
+        task.wait(4.25)
+        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
     end
 end)
 
