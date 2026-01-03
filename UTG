@@ -133,7 +133,10 @@ local function makeUTGButton(text)
 end
 
 -- Buttons
+local antiTripBtn = makeUTGButton("Toggle Anti-Trip")
 local WAKEUPBtn = makeUTGButton("WAKE UP(it may get trip in a rooms)")
+local PhysicBtn = makeUTGButton("Physic")
+local WAKEUPBROYOUSTUPIDBtn = makeUTGButton("GettingUp")
 local IAMRUNNINGSUPERDUPERFASTBtn = makeUTGButton("Toggle I AM RUNNING SUPER DUPER FAST")
 local IAMRUNNINGBtn = makeUTGButton("Toggle I AM RUNNING")
 local rootBtn = makeUTGButton("Toggle Freeze RootPart")
@@ -162,7 +165,38 @@ local function tpTo(pos)
     if root then root.CFrame = CFrame.new(pos) end
 end
 
+local antiTripOn = false
+
+antiTripBtn.MouseButton1Click:Connect(function()
+    antiTripOn = not antiTripOn
+    for _, part in ipairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") and part.Name == "Trip" then
+            part.CanTouch = not antiTripOn
+        end
+    end
+    antiTripBtn.Text = antiTripOn and "Anti-Trip ON" or "Toggle Anti-Trip"
+end)
+
+
 WAKEUPBtn.MouseButton1Click:Connect(function()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if humanoid and root then
+        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
+end)
+
+PhysicBtn.MouseButton1Click:Connect(function()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if humanoid and root then
+        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+    end
+end)
+
+WAKEUPBROYOUSTUPIDBtn.MouseButton1Click:Connect(function()
     local char = player.Character or player.CharacterAdded:Wait()
     local humanoid = char:FindFirstChildOfClass("Humanoid")
     local root = char:FindFirstChild("HumanoidRootPart")
