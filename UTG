@@ -134,17 +134,18 @@ local function makeUTGButton(text)
     return btn
 end
 
--- Buttons
+-- Buttons this is not useless
+local ragdollBtn = makeUTGButton("Ragdoll R6")
+local flingBtn = makeUTGButton("Self Fling")
 local antiTripBtn = makeUTGButton("Toggle Anti-Trip")
 local WAKEUPBtn = makeUTGButton("WAKE UP(it may get trip in a rooms)")
-local PhysicBtn = makeUTGButton("Physic")
-local WAKEUPBROYOUSTUPIDBtn = makeUTGButton("GettingUp")
 local IAMRUNNINGSUPERDUPERFASTBtn = makeUTGButton("Toggle I AM RUNNING SUPER DUPER FAST")
 local IAMRUNNINGBtn = makeUTGButton("Toggle I AM RUNNING")
 local rootBtn = makeUTGButton("Toggle Freeze RootPart")
 local charBtn = makeUTGButton("Toggle Freeze Character")
 local tallBtn = makeUTGButton("Tall/Tower (sticky required)")
 local tripHardBtn = makeUTGButton("Trip Forward (HARD)")
+local tripSuperDuperHardBtn = makeUTGButton("Trip Forward (SUPER DUPER HARD)")
 local tripBtn = makeUTGButton("Trip Forward")
 local antiSinkBtn = makeUTGButton("Anti-Sinking")
 local tpGlue1Btn = makeUTGButton("TP Glue1")
@@ -166,6 +167,68 @@ local function tpTo(pos)
     local root = char:FindFirstChild("HumanoidRootPart")
     if root then root.CFrame = CFrame.new(pos) end
 end
+
+
+-- assumes ragdollBtn already exists
+local isRagdolled = false
+
+ragdollBtn.MouseButton1Click:Connect(function()
+    local player = game.Players.LocalPlayer
+    local char = player.Character or player.CharacterAdded:Wait()
+    local humanoid = char:WaitForChild("Humanoid")
+
+    if not isRagdolled then
+        -- Ragdoll ON
+        humanoid.Sit = true
+        for _, desc in pairs(char:GetDescendants()) do
+            if desc:IsA("Motor6D") then
+                desc.Enabled = false
+                local socket = Instance.new("BallSocketConstraint")
+                local a1 = Instance.new("Attachment")
+                local a2 = Instance.new("Attachment")
+                a1.Parent = desc.Part0
+                a2.Parent = desc.Part1
+                socket.Attachment0 = a1
+                socket.Attachment1 = a2
+                socket.Parent = desc.Part0
+            end
+        end
+        ragdollBtn.Text = "Unragdoll R6"
+        isRagdolled = true
+    else
+        -- Ragdoll OFF
+        for _, desc in pairs(char:GetDescendants()) do
+            if desc:IsA("Motor6D") then
+                desc.Enabled = true
+            elseif desc:IsA("BallSocketConstraint") or desc:IsA("Attachment") then
+                desc:Destroy()
+            end
+        end
+        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+        ragdollBtn.Text = "Ragdoll R6"
+        isRagdolled = false
+    end
+end)
+
+
+
+
+
+
+flingBtn.MouseButton1Click:Connect(function()
+    local player = game.Players.LocalPlayer
+    local char = player.Character or player.CharacterAdded:Wait()
+    local humanoid = char:WaitForChild("Humanoid")
+    local root = char:WaitForChild("HumanoidRootPart")
+
+    -- Force sit
+    humanoid:ChangeState(Enum.HumanoidStateType.FallingDown)
+
+    -- Apply fling velocity in facing direction
+    local flingPower = 100 -- adjust strength
+    root.Velocity = Vector3.new(flingPower, flingPower, flingPower)
+end)
+
 
 local antiTripOn = false
 
@@ -189,23 +252,26 @@ WAKEUPBtn.MouseButton1Click:Connect(function()
     end
 end)
 
-PhysicBtn.MouseButton1Click:Connect(function()
-    local char = player.Character or player.CharacterAdded:Wait()
-    local humanoid = char:FindFirstChildOfClass("Humanoid")
-    local root = char:FindFirstChild("HumanoidRootPart")
-    if humanoid and root then
-        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-    end
-end)
+wait(0.1)
+-- Table to track created buttons so they don't duplicate
+local madeStates = {}
 
-WAKEUPBROYOUSTUPIDBtn.MouseButton1Click:Connect(function()
-    local char = player.Character or player.CharacterAdded:Wait()
-    local humanoid = char:FindFirstChildOfClass("Humanoid")
-    local root = char:FindFirstChild("HumanoidRootPart")
-    if humanoid and root then
-        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+-- Loop through all HumanoidStateTypes
+for _, state in pairs(Enum.HumanoidStateType:GetEnumItems()) do
+    if not madeStates[state.Name] then
+        wait(0.1) -- delay at generation step
+        local btn = makeUTGButton(state.Name) -- no "Force" prefix
+        btn.MouseButton1Click:Connect(function()
+            local player = game.Players.LocalPlayer
+            local char = player.Character or player.CharacterAdded:Wait()
+            local humanoid = char:WaitForChild("Humanoid")
+
+            humanoid:ChangeState(state)
+        end)
+        madeStates[state.Name] = true
     end
-end)
+end
+wait(0.1)
 
 -- Root Freeze
 local rootFrozen = false
@@ -276,6 +342,24 @@ tripHardBtn.MouseButton1Click:Connect(function()
 
         -- add forward velocity so it looks like a trip, not just a tilt. but HARD
         root.Velocity = root.CFrame.LookVector * 100 + Vector3.new(0, 0, -10)
+
+        -- wait a bit, then recover
+        task.wait(4.25)
+        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
+end)
+
+tripSuperDuperHardBtn.MouseButton1Click:Connect(function()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    local root = char:FindFirstChild("HumanoidRootPart")
+
+    if humanoid and root then
+        -- put humanoid into ragdoll physics
+        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
+        -- add forward velocity so it looks like a trip, not just a tilt. but HARD
+        root.Velocity = root.CFrame.LookVector * 1000 + Vector3.new(0, 0, -10)
 
         -- wait a bit, then recover
         task.wait(4.25)
