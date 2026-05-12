@@ -5,57 +5,6 @@ local TeleportService = game:GetService("TeleportService")
 local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
-local correctPlaceId = 107598099227012
-
-if game.PlaceId ~= correctPlaceId then
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "WrongGameNotifier"
-    gui.ResetOnSpawn = false
-    gui.Parent = player:WaitForChild("PlayerGui")
-
-    local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0.5,0,0.3,0)
-    frame.Position = UDim2.new(0.25,0,0.35,0)
-    frame.BackgroundColor3 = Color3.fromRGB(40,0,60)
-    frame.Parent = gui
-
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1,-20,0.6,-20)
-    label.Position = UDim2.new(0,10,0,10)
-    label.BackgroundTransparency = 1
-    label.TextColor3 = Color3.fromRGB(0,255,255)
-    label.Font = Enum.Font.SourceSansBold
-    label.TextSize = 22
-    label.TextWrapped = true
-    label.Text = "Sorry! You are in wrong game.\nPlease click Copy Link or Play Game."
-    label.Parent = frame
-
-    local copyBtn = Instance.new("TextButton")
-    copyBtn.Size = UDim2.new(0.45,0,0.25,0)
-    copyBtn.Position = UDim2.new(0.05,0,0.7,0)
-    copyBtn.Text = "Copy Link"
-    copyBtn.BackgroundColor3 = Color3.fromRGB(50,0,100)
-    copyBtn.TextColor3 = Color3.fromRGB(255,255,255)
-    copyBtn.Parent = frame
-
-    local playBtn = Instance.new("TextButton")
-    playBtn.Size = UDim2.new(0.45,0,0.25,0)
-    playBtn.Position = UDim2.new(0.5,0,0.7,0)
-    playBtn.Text = "Play Game"
-    playBtn.BackgroundColor3 = Color3.fromRGB(50,0,100)
-    playBtn.TextColor3 = Color3.fromRGB(255,255,255)
-    playBtn.Parent = frame
-
-    copyBtn.MouseButton1Click:Connect(function()
-        if setclipboard then
-            setclipboard("https://www.roblox.com/games/"..correctPlaceId)
-        end
-    end)
-
-    playBtn.MouseButton1Click:Connect(function()
-        TeleportService:Teleport(correctPlaceId, player)
-    end)
-end
 local utgGui = Instance.new("ScreenGui")
 utgGui.Name = "UTG"
 utgGui.ResetOnSpawn = false
@@ -145,6 +94,7 @@ local rootBtn = makeUTGButton("Toggle Freeze RootPart")
 local charBtn = makeUTGButton("Toggle Freeze Character")
 local tallBtn = makeUTGButton("Tall/Tower (sticky required)")
 local tripHardBtn = makeUTGButton("Trip Forward (HARD)")
+local swimQSBtn = makeUTGButton("Swim in Quicksand")
 local tripSuperDuperHardBtn = makeUTGButton("Trip Forward (SUPER DUPER HARD)")
 local tripBtn = makeUTGButton("Trip Forward")
 local antiSinkBtn = makeUTGButton("Anti-Sinking")
@@ -212,7 +162,54 @@ end)
 
 
 
+swimQSBtn.MouseButton1Click:Connect(function()
 
+    local char =
+        player.Character or
+        player.CharacterAdded:Wait()
+
+    local humanoid =
+        char:FindFirstChildOfClass("Humanoid")
+
+    local root =
+        char:FindFirstChild("HumanoidRootPart")
+
+    if humanoid and root then
+
+        -- reset movement
+        humanoid.WalkSpeed = 16
+        humanoid.JumpPower = 50
+        humanoid.PlatformStand = false
+
+        -- destroy old weird physics
+        for _,v in ipairs(root:GetChildren()) do
+            if v:IsA("BodyVelocity")
+            or v:IsA("BodyForce")
+            or v:IsA("VectorForce")
+            or v:IsA("AlignPosition")
+            or v:IsA("LinearVelocity")
+            or v:IsA("AngularVelocity") then
+                v:Destroy()
+            end
+        end
+
+        -- stop forced movement
+        root.AssemblyLinearVelocity = Vector3.zero
+        root.AssemblyAngularVelocity = Vector3.zero
+
+        -- force normal humanoid state
+        humanoid:ChangeState(Enum.HumanoidStateType.Running)
+
+        game:GetService("StarterGui"):SetCore(
+            "SendNotification",
+            {
+                Title = "Swim Enabled",
+                Text = "Quicksand physics corrupted.",
+                Duration = 3
+            }
+        )
+    end
+end)
 
 
 flingBtn.MouseButton1Click:Connect(function()
