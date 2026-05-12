@@ -15,14 +15,57 @@ utgFrame.Size = UDim2.new(0, 260, 0, 300)
 utgFrame.Position = UDim2.new(0, 20, 0, 20)
 utgFrame.BackgroundColor3 = Color3.fromRGB(40,0,60)
 utgFrame.Active = true
-utgFrame.Draggable = true
+local UIS = game:GetService("UserInputService")
+
+local dragging = false
+local dragInput
+local dragStart
+local startPos
 utgFrame.Parent = utgGui
 
 local titleBar = Instance.new("Frame")
 titleBar.Size = UDim2.new(1,0,0,30)
 titleBar.BackgroundColor3 = Color3.fromRGB(0,120,200)
 titleBar.Parent = utgFrame
+local UIS = game:GetService("UserInputService")
 
+local dragging = false
+local dragInput
+local dragStart
+local startPos
+
+titleBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = utgFrame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+titleBar.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        local delta = input.Position - dragStart
+
+        utgFrame.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)--fixed draggable
 local titleText = Instance.new("TextLabel")
 titleText.Size = UDim2.new(1,-90,1,0)
 titleText.Position = UDim2.new(0,5,0,0)
