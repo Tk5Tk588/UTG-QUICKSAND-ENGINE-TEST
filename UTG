@@ -137,7 +137,6 @@ local rootBtn = makeUTGButton("Toggle Freeze RootPart")
 local charBtn = makeUTGButton("Toggle Freeze Character")
 local tallBtn = makeUTGButton("Tall/Tower (sticky required)")
 local tripHardBtn = makeUTGButton("Trip Forward (HARD)")
-local swimQSBtn = makeUTGButton("Swim in Quicksand")
 local tripSuperDuperHardBtn = makeUTGButton("Trip Forward (SUPER DUPER HARD)")
 local tripBtn = makeUTGButton("Trip Forward")
 local antiSinkBtn = makeUTGButton("Anti-Sinking")
@@ -202,82 +201,6 @@ ragdollBtn.MouseButton1Click:Connect(function()
         isRagdolled = false
     end
 end)
-
-
-
-local RunService = game:GetService("RunService")
-
-local frictionLoop
-
-swimQSBtn.MouseButton1Click:Connect(function()
-
-    local char =
-        player.Character or
-        player.CharacterAdded:Wait()
-
-    local humanoid =
-        char:FindFirstChildOfClass("Humanoid")
-
-    local root =
-        char:FindFirstChild("HumanoidRootPart")
-
-    if humanoid and root then
-
-        -- reset movement
-        humanoid.WalkSpeed = 16
-        humanoid.JumpPower = 50
-        humanoid.PlatformStand = false
-
-        -- destroy old weird physics
-        for _,v in ipairs(root:GetChildren()) do
-            if v:IsA("BodyVelocity")
-            or v:IsA("BodyForce")
-            or v:IsA("VectorForce")
-            or v:IsA("AlignPosition")
-            or v:IsA("LinearVelocity")
-            or v:IsA("AngularVelocity") then
-                v:Destroy()
-            end
-        end
-
-        -- stop forced movement
-        root.AssemblyLinearVelocity = Vector3.zero
-        root.AssemblyAngularVelocity = Vector3.zero
-
-        -- infinite friction system
-        if frictionLoop then
-            frictionLoop:Disconnect()
-        end
-
-        frictionLoop = RunService.Heartbeat:Connect(function()
-
-            local moveDir = humanoid.MoveDirection
-
-            if moveDir.Magnitude < 0.01 then
-                local vel = root.AssemblyLinearVelocity
-
-                root.AssemblyLinearVelocity = Vector3.new(
-                    0,
-                    vel.Y,
-                    0
-                )
-            end
-        end)
-
-        -- force normal humanoid state
-        humanoid:ChangeState(Enum.HumanoidStateType.Running)
-
-        game:GetService("StarterGui"):SetCore(
-            "SendNotification",
-            {
-                Title = "Swim Enabled",
-                Text = "Quicksand physics corrupted.",
-                Duration = 3
-            }
-        )
-    end
-end)
-
 
 flingBtn.MouseButton1Click:Connect(function()
     local player = game.Players.LocalPlayer
