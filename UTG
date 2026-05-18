@@ -205,6 +205,10 @@ end)
 
 
 
+local RunService = game:GetService("RunService")
+
+local frictionLoop
+
 swimQSBtn.MouseButton1Click:Connect(function()
 
     local char =
@@ -239,6 +243,26 @@ swimQSBtn.MouseButton1Click:Connect(function()
         -- stop forced movement
         root.AssemblyLinearVelocity = Vector3.zero
         root.AssemblyAngularVelocity = Vector3.zero
+
+        -- infinite friction system
+        if frictionLoop then
+            frictionLoop:Disconnect()
+        end
+
+        frictionLoop = RunService.Heartbeat:Connect(function()
+
+            local moveDir = humanoid.MoveDirection
+
+            if moveDir.Magnitude < 0.01 then
+                local vel = root.AssemblyLinearVelocity
+
+                root.AssemblyLinearVelocity = Vector3.new(
+                    0,
+                    vel.Y,
+                    0
+                )
+            end
+        end)
 
         -- force normal humanoid state
         humanoid:ChangeState(Enum.HumanoidStateType.Running)
