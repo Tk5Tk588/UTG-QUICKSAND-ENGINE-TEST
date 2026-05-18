@@ -379,44 +379,65 @@ end)
 -- Anti-Sinking
 local antiSinkOn = false
 local antiLoop = nil
+
 antiSinkBtn.MouseButton1Click:Connect(function()
+
     antiSinkOn = not antiSinkOn
+
+    if antiLoop then
+        task.cancel(antiLoop)
+        antiLoop = nil
+    end
+
     if antiSinkOn then
+
         antiSinkBtn.Text = "Anti-Sinking ON"
-        antiLoop = task.spawn(function()
-            while antiSinkOn do
-                for _, part in ipairs(workspace:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        for _, sinkName in ipairs({
-                            "Glue","WallGlue","Clay","LiquidBog",
-                            "Mud","Quicksand","Slime","Tar","Oobleck"
-                        }) do
-                            if part.Name == sinkName then
-                                part.Anchored = true
-                                part.CanCollide = true
-                            end
-                        end
-                    end
-                end
-                task.wait(0.5)
-            end
-        end)
-    else
-        antiSinkBtn.Text = "Anti-Sinking"
-        if antiLoop then
-            task.cancel(antiLoop)
-            antiLoop = nil
-        end
+
+antiLoop = task.spawn(function()
+
+    while antiSinkOn do
+
         for _, part in ipairs(workspace:GetDescendants()) do
+
             if part:IsA("BasePart") then
-                for _, sinkName in ipairs({
-                    "Glue","WallGlue","Clay","LiquidBog",
-                    "Mud","Quicksand","Slime","Tar","Oobleck"
-                }) do
-                    if part.Name == sinkName then
-                        part.Anchored = true
-                        part.CanCollide = false
-                    end
+
+                local registered =
+                    part:GetAttribute("QSE_REGISTERED") == true
+                    or game:GetService("CollectionService"):HasTag(
+                        part,
+                        "QSE_REGISTERED"
+                    )
+
+                if registered
+                or part.Name == "Oobleck" then
+
+                    part.CanCollide = true
+                end
+            end
+        end
+
+        task.wait()
+    end
+end)
+    else
+
+        antiSinkBtn.Text = "Anti-Sinking"
+
+        for _, part in ipairs(workspace:GetDescendants()) do
+
+            if part:IsA("BasePart") then
+
+                local registered =
+                    part:GetAttribute("QSE_REGISTERED") == true
+                    or game:GetService("CollectionService"):HasTag(
+                        part,
+                        "QSE_REGISTERED"
+                    )
+
+                if registered
+                or part.Name == "Oobleck" then
+
+                    part.CanCollide = false
                 end
             end
         end
